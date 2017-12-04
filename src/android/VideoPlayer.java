@@ -53,58 +53,76 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
      */
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("play")) {
-            this.callbackContext = callbackContext;
-
-            CordovaResourceApi resourceApi = webView.getResourceApi();
-            String target = args.getString(0);
-            final JSONObject options = args.getJSONObject(1);
-
-            String fileUriStr;
-            try {
-                Uri targetUri = resourceApi.remapUri(Uri.parse(target));
-                fileUriStr = targetUri.toString();
-            } catch (IllegalArgumentException e) {
-                fileUriStr = target;
-            }
-
-            Log.v(LOG_TAG, fileUriStr);
-
-            final String path = stripFileProtocol(fileUriStr);
-
-            // Create dialog in new thread
-            cordova.getActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                    openVideoDialog(path, options);
-                }
-            });
-
-            // Don't return any result now
-            PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
-            pluginResult.setKeepCallback(true);
-            callbackContext.sendPluginResult(pluginResult);
-            callbackContext = null;
-
+            play(args, callbackContext);
             return true;
         }
         else if (action.equals("close")) {
-            if (dialog != null) {
-                if(player.isPlaying()) {
-                    player.stop();
-                }
-                player.release();
-                dialog.dismiss();
-            }
-
-            if (callbackContext != null) {
-                PluginResult result = new PluginResult(PluginResult.Status.OK);
-                result.setKeepCallback(false); // release status callback in JS side
-                callbackContext.sendPluginResult(result);
-                callbackContext = null;
-            }
-
+            close(callbackContext);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Stop and close player
+     *
+     * @param callbackId    The callback id used when calling back into JavaScript.
+     */
+    private void close(CallbackContext callbackContext) {
+        if (dialog != null) {
+            if (player.isPlaying()) {
+                player.stop();
+            }
+            player.release();
+            dialog.dismiss();
+        }
+
+        if (callbackContext != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK);
+            result.setKeepCallback(false); // release status callback in JS side
+            callbackContext.sendPluginResult(result);
+            callbackContext = null;
+        }
+    }
+
+    /**
+     * Open player and play requesed URL
+     *
+     * @param args          JSONArray of arguments for the plugin.
+     * @param callbackId    The callback id used when calling back into JavaScript.
+     * @return              A PluginResult object with a status and message.
+     */
+    private void play(CordovaArgs args, CallbackContext callbackContext) {
+        this.callbackContext = callbackContext;
+
+        CordovaResourceApi resourceApi = webView.getResourceApi();
+        String target = args.getString(0);
+        final JSONObject options = args.getJSONObject(1);
+
+        String fileUriStr;
+        try {
+            Uri targetUri = resourceApi.remapUri(Uri.parse(target));
+            fileUriStr = targetUri.toString();
+        } catch (IllegalArgumentException e) {
+            fileUriStr = target;
+        }
+
+        Log.v(LOG_TAG, fileUriStr);
+
+        final String path = stripFileProtocol(fileUriStr);
+
+        // Create dialog in new thread
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                openVideoDialog(path, options);
+            }
+        });
+
+        // Don't return any result now
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
+        pluginResult.setKeepCallback(true);
+        callbackContext.sendPluginResult(pluginResult);
+        callbackContext = null;
     }
 
     /**
