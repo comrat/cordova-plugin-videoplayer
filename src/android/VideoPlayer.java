@@ -94,9 +94,9 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
      */
     private void play(CordovaArgs args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
-        JSONObject options;
-        String fileUriStr;
-        String target;
+        JSONObject options = new JSONObject("{}");
+        String fileUriStr = "";
+        String target = "";
 
         try {
             CordovaResourceApi resourceApi = webView.getResourceApi();
