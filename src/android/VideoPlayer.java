@@ -60,7 +60,51 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
             close(callbackContext);
             return true;
         }
+        else if (action.equals("pause")) {
+            pause(callbackContext);
+            return true;
+        }
+        else if (action.equals("resume")) {
+            resume(callbackContext);
+            return true;
+        }
         return false;
+    }
+
+    /**
+     * Pause playback
+     *
+     * @param callbackId    The callback id used when calling back into JavaScript.
+     */
+    private void resume(CallbackContext callbackContext) {
+        if (videoView != null) {
+            videoView.resume();
+        }
+
+        if (callbackContext != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK);
+            result.setKeepCallback(false); // release status callback in JS side
+            callbackContext.sendPluginResult(result);
+            callbackContext = null;
+        }
+    }
+
+    /**
+     * Pause playback
+     *
+     * @param callbackId    The callback id used when calling back into JavaScript.
+     */
+    private void pause(CallbackContext callbackContext) {
+        if (videoView != null) {
+            videoView.pause();
+        }
+
+        if (callbackContext != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK);
+            result.setKeepCallback(false); // release status callback in JS side
+            callbackContext.sendPluginResult(result);
+            callbackContext = null;
+        }
     }
 
     /**
