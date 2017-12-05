@@ -92,17 +92,15 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
      * @param callbackId    The callback id used when calling back into JavaScript.
      * @return              A PluginResult object with a status and message.
      */
-    private void play(CordovaArgs args, CallbackContext callbackContext) {
+    private void play(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
-        JSONObject options = new JSONObject("{}");
-        String fileUriStr = "";
-        String target = "";
 
+        CordovaResourceApi resourceApi = webView.getResourceApi();
+        String target = args.getString(0);
+        final JSONObject options = args.getJSONObject(1);
+
+        String fileUriStr;
         try {
-            CordovaResourceApi resourceApi = webView.getResourceApi();
-            target = args.getString(0);
-            options = args.getJSONObject(1);
-
             Uri targetUri = resourceApi.remapUri(Uri.parse(target));
             fileUriStr = targetUri.toString();
         } catch (IllegalArgumentException e) {
