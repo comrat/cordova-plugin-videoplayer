@@ -69,7 +69,7 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
             return true;
         }
         else if (action.equals("seekTo")) {
-            String msec = args.getInt(0);
+            int msec = args.getInt(0);
             seekTo(msec, callbackContext);
             return true;
         }
@@ -142,7 +142,7 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
      * @param callbackId    The callback id used when calling back into JavaScript.
      * @return              A PluginResult object with a status and message.
      */
-    private void seekTo(Int msec, CallbackContext callbackContext) throws JSONException {
+    private void seekTo(int msec, CallbackContext callbackContext) throws JSONException {
         if (videoView != null) {
             videoView.seekTo(msec);
         }
