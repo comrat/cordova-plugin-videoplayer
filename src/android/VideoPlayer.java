@@ -68,6 +68,12 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
             resume(callbackContext);
             return true;
         }
+        else if (action.equals("seekTo")) {
+            String msec = args.getInt(0);
+            seekTo(msec, callbackContext);
+            return true;
+        }
+
         return false;
     }
 
@@ -119,6 +125,26 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
             }
             player.release();
             dialog.dismiss();
+        }
+
+        if (callbackContext != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK);
+            result.setKeepCallback(false); // release status callback in JS side
+            callbackContext.sendPluginResult(result);
+            callbackContext = null;
+        }
+    }
+
+    /**
+     * Seek to required millisecond
+     *
+     * @param msec          millisecond to seek
+     * @param callbackId    The callback id used when calling back into JavaScript.
+     * @return              A PluginResult object with a status and message.
+     */
+    private void seekTo(Int msec, CallbackContext callbackContext) throws JSONException {
+        if (videoView != null) {
+            videoView.seekTo(msec);
         }
 
         if (callbackContext != null) {
