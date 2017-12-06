@@ -232,9 +232,21 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
         main.addView(videoView);
 
         player = new MediaPlayer();
-        player.setOnPreparedListener(this);
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
+        player.setOnPreparedListener(new OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setOnVideoSizeChangedListener(new OnVideoSizeChangedListener() {
+                    @Override
+                    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                        mc = new MediaController(VideoPlayer.this);
+                        player.setMediaController(mc);
+                        mc.setAnchorView(player);
+                    }
+                });
+            }
+        });
 
         if (path.startsWith(ASSETS)) {
             String f = path.substring(15);
