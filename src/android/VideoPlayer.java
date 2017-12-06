@@ -242,9 +242,9 @@ public class VideoPlayer extends CordovaPlugin implements OnCompletionListener, 
                 mp.setOnVideoSizeChangedListener(new OnVideoSizeChangedListener() {
                     @Override
                     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                        MediaController mc = new MediaController(VideoPlayer.this);
-                        player.setMediaController(mc);
-                        mc.setAnchorView(player);
+                        MediaController mc = new MediaController(VideoPlayer.this.player);
+                        VideoPlayer.this.player.setMediaController(mc);
+                        mc.setAnchorView(VideoPlayer.this.player);
                     }
                 });
             }
